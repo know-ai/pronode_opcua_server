@@ -1,0 +1,31 @@
+FROM python:3.10.2-alpine3.15
+
+RUN adduser -D knowai
+
+WORKDIR /app
+
+LABEL author="KnowAI"
+
+LABEL description="Pronode OPCUA Server"
+
+RUN pip3 install --upgrade pip
+
+COPY requirements.txt requirements.txt
+
+RUN pip3 install -r requirements.txt
+
+COPY PyHades-0.0.6-py3-none-any.whl PyHades-0.0.6-py3-none-any.whl
+
+RUN pip3 install PyHades-0.0.6-py3-none-any.whl
+
+COPY . .
+
+RUN chmod +x startup.sh
+
+RUN chown -R knowai:knowai ./
+
+USER knowai
+
+EXPOSE 5001
+
+ENTRYPOINT ["./startup.sh"]
